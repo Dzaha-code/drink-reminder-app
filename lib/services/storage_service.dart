@@ -10,6 +10,7 @@ class StorageService {
   static const _keyReminders = 'reminders_v1';
   static const _keyNotificationsEnabled = 'settings_notifications_enabled_v1';
   static const _keyDefaultMessage = 'settings_default_message_v1';
+  static const _keyDefaultSound = 'settings_default_sound_v1';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -40,5 +41,14 @@ class StorageService {
 
   static Future<void> setDefaultMessage(String message) async {
     await _prefs?.setString(_keyDefaultMessage, message);
+  }
+
+  static String defaultSound() {
+    // Name without extension for Android (raw resource), and filename for iOS (e.g. sound.caf)
+    return _prefs?.getString(_keyDefaultSound) ?? '';
+  }
+
+  static Future<void> setDefaultSound(String sound) async {
+    await _prefs?.setString(_keyDefaultSound, sound);
   }
 }

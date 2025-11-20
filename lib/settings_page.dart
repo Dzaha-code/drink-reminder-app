@@ -13,6 +13,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late bool _notificationsEnabled;
   late TextEditingController _messageController;
+  late TextEditingController _soundController;
 
   @override
   void initState() {
@@ -21,17 +22,22 @@ class _SettingsPageState extends State<SettingsPage> {
     _messageController = TextEditingController(
       text: StorageService.defaultMessage(),
     );
+    _soundController = TextEditingController(
+      text: StorageService.defaultSound(),
+    );
   }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _soundController.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     await StorageService.setNotificationsEnabled(_notificationsEnabled);
     await StorageService.setDefaultMessage(_messageController.text.trim());
+    await StorageService.setDefaultSound(_soundController.text.trim());
     if (!mounted) return;
     // If notifications were disabled, cancel all scheduled notifications.
     // If enabled, schedule notifications for reminders that are enabled.
@@ -42,6 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     } else {
       final body = StorageService.defaultMessage();
+      final sound = StorageService.defaultSound();
       for (final r in reminders) {
         if (r.enabled) {
           await NotificationService.scheduleDaily(
@@ -49,6 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
             r.title,
             body,
             TimeOfDay.fromDateTime(r.time),
+            soundName: sound.isNotEmpty ? sound : null,
           );
         }
       }
@@ -80,6 +88,17 @@ class _SettingsPageState extends State<SettingsPage> {
             TextField(
               controller: _messageController,
               decoration: const InputDecoration(border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 12),
+            const Text('Notification sound (Android raw name or iOS filename)'),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _soundController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText:
+                    'e.g. morning_alert (no extension for Android) or sound.caf for iOS',
+              ),
             ),
             const SizedBox(height: 20),
             Row(

@@ -45,8 +45,9 @@ class NotificationService {
     int id,
     String title,
     String body,
-    TimeOfDay time,
-  ) async {
+    TimeOfDay time, {
+    String? soundName,
+  }) async {
     // compute next instance in local timezone
     final now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime(
@@ -61,14 +62,30 @@ class NotificationService {
       scheduled = scheduled.add(const Duration(days: 1));
     }
 
-    final android = AndroidNotificationDetails(
-      'drink_reminder_channel',
-      'Drink Reminders',
-      channelDescription: 'Reminders to drink water',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    final ios = DarwinNotificationDetails();
+    AndroidNotificationDetails android;
+    if (soundName != null && soundName.isNotEmpty) {
+      android = AndroidNotificationDetails(
+        'drink_reminder_channel',
+        'Drink Reminders',
+        channelDescription: 'Reminders to drink water',
+        importance: Importance.max,
+        priority: Priority.high,
+        sound: RawResourceAndroidNotificationSound(soundName),
+      );
+    } else {
+      android = AndroidNotificationDetails(
+        'drink_reminder_channel',
+        'Drink Reminders',
+        channelDescription: 'Reminders to drink water',
+        importance: Importance.max,
+        priority: Priority.high,
+      );
+    }
+
+    final ios = (soundName != null && soundName.isNotEmpty)
+        ? DarwinNotificationDetails(sound: soundName)
+        : const DarwinNotificationDetails();
+
     final details = NotificationDetails(android: android, iOS: ios);
 
     await _plugin.zonedSchedule(
