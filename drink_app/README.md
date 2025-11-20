@@ -1,16 +1,25 @@
-# drink_app
+# drink_app (Drink Reminder)
 
-A new Flutter project.
+Minimal Drink Reminder app skeleton. This project currently keeps the
+default counter example UI so tests remain valid while giving the app a
+clear name and a place to grow into a full reminder application.
 
-## Getting Started
+## How to run
 
-This project is a starting point for a Flutter application.
+1. Ensure you have Flutter installed: https://flutter.dev/docs/get-started/install
+2. From the project root run:
 
-A few resources to get you started if this is your first Flutter project:
+```powershell
+cd .\drink_app
+flutter pub get
+flutter run
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Notes
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- The app title and theme were updated to "Drink Reminder".
+- Tests still pass against the example counter UI. Replace the home
+	widget when adding reminder/scheduling features; update tests accordingly.
+
+If you want, I can scaffold a reminders model, local persistence, and
+notification wiring (requires adding platform plugins) as the next step.
